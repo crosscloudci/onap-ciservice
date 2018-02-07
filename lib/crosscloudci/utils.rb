@@ -4,8 +4,10 @@ require 'uri'
 
 module CrossCloudCi
   module Utils
-    class Error < StandardError
-    end
+    class Error < StandardError ;  end
+    class InvalidConfig < CrossCloudCi::Utils::Error; end
+    class ConfigLoadError < CrossCloudCi::Utils::Error; end
+    class UnknownReleaseType < CrossCloudCi::Utils::Error; end
 
     @config_path = "config/cross-cloud.yml"
 
