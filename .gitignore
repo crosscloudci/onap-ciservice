@@ -1,0 +1,8 @@
+.env
+.env.secrets
+.byebug_history
+scratch/
+db/datastore*.yml*
+db/datastore.yml*
+logs/*
+db/cache/*
