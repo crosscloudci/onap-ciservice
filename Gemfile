@@ -8,6 +8,8 @@ ruby '2.4.3'
 #   Gem::Dependency.new('', constraint).match?('', RUBY_VERSION)
 # end
 
+#gem 'docker-api'
+gem 'docker_registry2'
 gem 'json'
 gem 'awesome_print'
 gem 'faraday'
