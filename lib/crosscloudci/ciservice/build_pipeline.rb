@@ -15,7 +15,7 @@ module CrossCloudCi
         @project_name = options[:project_name]
         @cross_cloud_config = CrossCloudCi::Utils.load_config(options[:config_location])
 
-        @container_image_url = project_config["container_image_url"]
+        @container_image_url = project_config["container_image_url"] if project_config
       end
 
       def project_config

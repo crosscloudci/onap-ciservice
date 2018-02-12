@@ -46,4 +46,21 @@ describe CrossCloudCi::Onap::CiService::BuildPipeline do
     it "builds a container url based on the container image url and jenkins master/nightly release" do
     end
   end
+
+  describe ".verify_container_artifact" do
+    # NOTE: ONAP SO is > 1.5GB
+    it "can sucessfully do a docker pull on a valid container artifact from onap container registry" do
+      config_location = "spec/test-cross-cloud.yml"
+      project_name = "onap-mso"
+      options = {config_location: config_location, project_name: project_name}
+
+      container_image_url = "https://nexus3.onap.org:10001/openecomp/mso"
+      image_tag = "v1.1.1"
+      container_artifact_url = "#{container_image_url}:#{image_tag}"
+
+      pipeline = CrossCloudCi::CiService::BuildPipeline.new(options)
+      expect(pipeline.verify_container_artifact(container_artifact_url)).to be_truthy
+
+    end
+  end
 end
