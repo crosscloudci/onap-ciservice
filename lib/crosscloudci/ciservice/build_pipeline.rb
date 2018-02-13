@@ -22,6 +22,7 @@ module CrossCloudCi
         @cross_cloud_config["projects"][@project_name]
       end
 
+      # TODO: switch to alias or include module
       def verify_container_artifact(url)
         CrossCloudCi::CiService::ContainerRegistry.verify_artifact(url)
       end

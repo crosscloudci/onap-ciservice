@@ -7,6 +7,8 @@ module CrossCloudCi
   module CiService
     module ContainerRegistry
       #TODO: add error/exception class
+      class Error < StandardError ;  end
+      class ContainerVerifyError < CrossCloudCi::CiService::ContainerRegistry::Error; end
 
       class << self
         attr_accessor :registry_url, :connection, :registry_user, :registry_password
@@ -35,22 +37,33 @@ module CrossCloudCi
       #def self.docker_pull(image, opts = {})
       #end
 
+      ## Purpose: Verify that the docker container given is accessible and downloads successfully
       def self.verify_artifact(url, opts={})
         # TODO: handle connection.  Maybe:
         #   1. raise  error if @connection is not established
         #   2. create connection based on opts passed?
 
-        url_parts = url.match("(?:([^:]*)://)?([^/]*)([^:]*)?:?(.*)?").to_a
+        download_container(url)
+        # if opts[:delete]
+        #   delete_local_artifact(url)
+        # end
+      end
 
-        proto, hostport, namespacerepo, tag = url_parts.slice(1, url_parts.length)
-        namespacerepo.sub!("/","")
+      def self.download_container(url, opts={})
+        # TODO: handle connection.  Maybe:
+        #   1. raise  error if @connection is not established
+        #   2. create connection based on opts passed?
 
-        registry_url = "#{proto}://#{hostport}"
-        opts = {user: 'docker', password: 'docker'}
+        # url_parts = url.match("(?:([^:]*)://)?([^/]*)([^:]*)?:?(.*)?").to_a
+        #
+        # proto, hostport, namespacerepo, tag = url_parts.slice(1, url_parts.length)
+        # namespacerepo.sub!("/","")
+
+        #registry_url = "#{proto}://#{hostport}"
+        #opts = {user: 'docker', password: 'docker'}
 #         reg = self.connect(registry_url, opts)
 
-        
-        pull_results = nil
+        #pull_results = nil
 
         # # if opts[:delete] # only deleting for temp paths
           # Dir.mktmpdir do |dir|
@@ -63,17 +76,37 @@ module CrossCloudCi
         # end
         #
        
-        image_url = "#{hostport}/#{namespacerepo}:#{tag}"
+        image_url = extract_image_url(url)
 
+        # TODO: capture exit code and stderr
 				pull_results = IO.popen(['docker', 'pull', image_url], in: :in) do |io|
 				 io.read
 				end
 
-				raise 'docker pull failed' unless $?.success?
-
+        raise ContainerVerifyError, "Container::Registry: docker pull failed for #{image_url}" unless $?.success?
         pull_results
       end
-    end
-  end
-end
+
+      def self.delete_local_artifact(url, opts={})
+        image_url = extract_image_url(url)
+        puts "deleting #{image_url}"
+				results = IO.popen(['docker', 'image', 'rm', image_url], in: :in) do |io|
+				 io.read
+				end
+
+        #raise ContainerVerifyError, "Container::Registry: docker pull failed for #{image_url}" unless $?.success?
+        $?.success?
+      end
+
+      def self.extract_image_url(url)
+        url_parts = url.match("(?:([^:]*)://)?([^/]*)([^:]*)?:?(.*)?").to_a
+
+        proto, hostport, namespacerepo, tag = url_parts.slice(1, url_parts.length)
+        namespacerepo.sub!("/","")
+
+        "#{hostport}/#{namespacerepo}:#{tag}"
+      end 
+    end # ContainerRegistry
+  end # CiService
+end # CrossCloudCi
 
