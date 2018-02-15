@@ -7,7 +7,7 @@ describe CrossCloudCi::CiService::BuildPipeline do
     it 'it loads the cross-cloud.yml config and sets project_name' do
       #config_location = "https://raw.githubusercontent.com/crosscloudci/cncf-configuration/master/cross-cloud.yml"
       config_location = "spec/test-cross-cloud.yml"
-      project_name = "onap-mso"
+      project_name = "onap-so"
       options = {config_location: config_location, project_name: project_name}
 
       pipeline = CrossCloudCi::CiService::BuildPipeline.new(options)
@@ -19,17 +19,33 @@ describe CrossCloudCi::CiService::BuildPipeline do
   describe ".project_config" do
     it "returns the project specific config from cross-cloud.yml" do
       config_location = "spec/test-cross-cloud.yml"
-      project_name = "onap-mso"
+      #project_name = "onap-so"
+      project_name = "kubernetes"
       options = {config_location: config_location, project_name: project_name}
 
       pipeline = CrossCloudCi::CiService::BuildPipeline.new(options)
       expect(pipeline).to be_a(CrossCloudCi::CiService::BuildPipeline)
       expect(pipeline.project_config).to be_truthy
-      expect(pipeline.project_config["gitlab_name"]).to eq("onap")
+      expect(pipeline.project_config["gitlab_name"]).to eq("Kubernetes")
     end
   end
 
-  describe ".verify_container_artifact" do
+  # xdescribe ".verify_container_artifact" do
+  #   xit "can sucessfully do a docker pull on a valid container artifact from docker hub registry" do
+  #     config_location = "spec/test-cross-cloud.yml"
+  #     project_name = "busybox"
+  #     options = {config_location: config_location, project_name: project_name}
+  #
+  #     container_image_url = "registry.hub.docker.com/library/busybox"
+  #     image_tag = "latest"
+  #     container_artifact_url = "#{container_image_url}:#{image_tag}"
+  #
+  #     pipeline = CrossCloudCi::CiService::BuildPipeline.new(options)
+  #     expect(pipeline.verify_container_artifact(container_artifact_url)).to be_truthy
+  #   end
+  # end
+
+  describe ".download_container" do
     it "can sucessfully do a docker pull on a valid container artifact from docker hub registry" do
       config_location = "spec/test-cross-cloud.yml"
       project_name = "busybox"
@@ -40,7 +56,7 @@ describe CrossCloudCi::CiService::BuildPipeline do
       container_artifact_url = "#{container_image_url}:#{image_tag}"
 
       pipeline = CrossCloudCi::CiService::BuildPipeline.new(options)
-      expect(pipeline.verify_container_artifact(container_artifact_url)).to be_truthy
+      expect(pipeline.download_container(container_artifact_url)).to be_truthy
     end
   end
 

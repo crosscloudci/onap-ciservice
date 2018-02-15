@@ -9,6 +9,7 @@ module CrossCloudCi
       #TODO: add error/exception class
       class Error < StandardError ;  end
       class ContainerVerifyError < CrossCloudCi::CiService::ContainerRegistry::Error; end
+      class ContainerDownloadError < CrossCloudCi::CiService::ContainerRegistry::Error; end
 
       class << self
         attr_accessor :registry_url, :connection, :registry_user, :registry_password
@@ -38,16 +39,28 @@ module CrossCloudCi
       #end
 
       ## Purpose: Verify that the docker container given is accessible and downloads successfully
-      def self.verify_artifact(url, opts={})
-        # TODO: handle connection.  Maybe:
-        #   1. raise  error if @connection is not established
-        #   2. create connection based on opts passed?
+      # def self.verify_artifact(path, opts={})
+      #   # Verify local container
+        #raise ContainerVerifyError, "Container::Registry: problem with container from #{path}" unless $?.success?
+      # end
+      # def self.verify_artifact(url, opts={})
+      #   # TODO: handle connection.  Maybe:
+      #   #   1. raise  error if @connection is not established
+      #   #   2. create connection based on opts passed?
+      #
+      #   download_container(url)
+      #   # if opts[:delete]
+      #   #   delete_local_artifact(url)
+      #   # end
+        #raise ContainerVerifyError, "Container::Registry: problem with container from #{image_url}" unless $?.success?
+      #
+      #  # TODO: use docker run on container to run tests
+      # end
 
-        download_container(url)
-        # if opts[:delete]
-        #   delete_local_artifact(url)
-        # end
-      end
+      # def self.install_container(url, opts={})
+      #   download_container(url, opts)
+      #   verify_container(url, opts)
+      # end
 
       def self.download_container(url, opts={})
         # TODO: handle connection.  Maybe:
@@ -74,7 +87,6 @@ module CrossCloudCi
         # else
         #   pull_results = reg.pull(namespacerepo, tag, opts[:path])
         # end
-        #
        
         image_url = extract_image_url(url)
 
@@ -83,7 +95,7 @@ module CrossCloudCi
 				 io.read
 				end
 
-        raise ContainerVerifyError, "Container::Registry: docker pull failed for #{image_url}" unless $?.success?
+        raise ContainerDownloadError, "Container::Registry: docker pull failed for #{image_url}" unless $?.success?
         pull_results
       end
 

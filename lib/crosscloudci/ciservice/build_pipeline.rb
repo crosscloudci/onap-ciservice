@@ -23,6 +23,10 @@ module CrossCloudCi
       end
 
       # TODO: switch to alias or include module
+      def download_container(url)
+        CrossCloudCi::CiService::ContainerRegistry.download_container(url)
+      end
+
       def verify_container_artifact(url)
         CrossCloudCi::CiService::ContainerRegistry.verify_artifact(url)
       end

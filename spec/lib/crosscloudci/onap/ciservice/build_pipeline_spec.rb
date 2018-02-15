@@ -15,7 +15,7 @@ describe CrossCloudCi::Onap::CiService::BuildPipeline do
   describe ".new" do
     it "has access to the cross-cloud config" do
       config_location = "spec/test-cross-cloud.yml"
-      project_name = "onap-mso"
+      project_name = "onap-so"
       options = {config_location: config_location, project_name: project_name}
 
       pipeline = CrossCloudCi::Onap::CiService::BuildPipeline.new(options)
@@ -25,13 +25,13 @@ describe CrossCloudCi::Onap::CiService::BuildPipeline do
   end
 
   describe ".container_artifact_url" do
-    it "builds a container url based on release type given" do
+    xit "builds a container url based on release type given" do
       # test container_artifact_url
     end
 
     it "builds a container url based on the container image url and the ref for stable releases" do
       config_location = "spec/test-cross-cloud.yml"
-      project_name = "onap-mso"
+      project_name = "onap-so"
       options = {config_location: config_location, project_name: project_name}
 
       pipeline = CrossCloudCi::Onap::CiService::BuildPipeline.new(options)
@@ -47,11 +47,11 @@ describe CrossCloudCi::Onap::CiService::BuildPipeline do
     end
   end
 
-  describe ".verify_container_artifact" do
+  describe ".download_container" do
     # NOTE: ONAP SO is > 1.5GB
-    it "can sucessfully do a docker pull on a valid container artifact from onap container registry" do
+    it "can sucessfully download a contianer from onap container registry" do
       config_location = "spec/test-cross-cloud.yml"
-      project_name = "onap-mso"
+      project_name = "onap-so"
       options = {config_location: config_location, project_name: project_name}
 
       container_image_url = "https://nexus3.onap.org:10001/openecomp/mso"
@@ -59,8 +59,24 @@ describe CrossCloudCi::Onap::CiService::BuildPipeline do
       container_artifact_url = "#{container_image_url}:#{image_tag}"
 
       pipeline = CrossCloudCi::CiService::BuildPipeline.new(options)
-      expect(pipeline.verify_container_artifact(container_artifact_url)).to be_truthy
-
+      expect(pipeline.download_container(container_artifact_url)).to be_truthy
     end
   end
+
+  # xdescribe ".verify_container_artifact" do
+  #   # NOTE: ONAP SO is > 1.5GB
+  #   xit "can sucessfully run a test on the downloaded container artifact from onap container registry" do
+  #     config_location = "spec/test-cross-cloud.yml"
+  #     project_name = "onap-so"
+  #     options = {config_location: config_location, project_name: project_name}
+  #
+  #     container_image_url = "https://nexus3.onap.org:10001/openecomp/mso"
+  #     image_tag = "v1.1.1"
+  #     container_artifact_url = "#{container_image_url}:#{image_tag}"
+  #
+  #     pipeline = CrossCloudCi::CiService::BuildPipeline.new(options)
+  #     expect(pipeline.verify_container_artifact(container_artifact_url)).to be_truthy
+  #
+  #   end
+  # end
 end
