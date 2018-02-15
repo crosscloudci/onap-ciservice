@@ -1,0 +1,69 @@
+#!/usr/bin/env ruby
+
+lib = File.expand_path('../../lib', __FILE__)
+$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
+
+require 'byebug'
+require 'logger'
+require 'thor'
+
+if ENV["CROSS_CLOUD_CI_ENV"]
+  ci_env = ENV["CROSS_CLOUD_CI_ENV"]
+else
+  ci_env = "development"
+end
+
+# @logger = Logger.new(STDOUT) 
+# @logger.level = Logger::DEBUG 
+#@logger.info build_pipeline_help 
+
+class BuildPipeline < Thor
+  class_option :integration, :enum => %w{onap test}
+  class_option "release-type", :enum => %w{stable head master}, :required => true
+
+  desc "download_container [--integration=INTEGRATION] <--release-type=RELEASE-TYPE> <project_name> [--create-pinning-config=FILENAME]", "Download container for a project from a container registry"
+  long_desc <<-LONGDESC
+    Downloads the remote container for a project from a registry
+
+    --integration can be used to specifiy an external CI integration
+    --release-type specifies either stable or head (actual version is determined internally)
+    --create-pinning-config will create a artifact pinning configuration
+  LONGDESC
+  option "create-pinning-config", :type => :string, :default => "release.env"
+  def download_container(project_name)
+    puts "INTEGRATION: #{options[:integration]}" if options[:integration]
+    puts "Downloading #{options["release-type"]} #{project_name} container"
+    create_pinnings(project_name)
+  end
+
+  desc "delete_container [--integration=INTEGRATION] <--release-type=RELEASE-TYPE> <project_name>", "Delete local cached container for a project"
+  long_desc <<-LONGDESC
+    Deletes a local container image from the cache
+
+    --release-type specifies either stable or head (actual version is determined internally)
+    --integration can be used to specifiy an external CI integration
+  LONGDESC
+  option "release-type", :type => :string, :required => true
+  def delete_container(project_name)
+    puts "INTEGRATION: #{options[:integration]}" if options[:integration]
+    puts "Deleting container image from cache for #{options["release_type"]} #{project_name}"
+  end
+
+  desc "create_pinnings [--integration=INTEGRATION] <--release-type=RELEASE-TYPE> <project_name>", "Create pinnings configuration for project and release type"
+  long_desc <<-LONGDESC
+    Creates a pinning configuration for the specified project and release type
+
+    --release-type specifies either stable or head (actual version is determined internally)
+    --integration can be used to specifiy an external CI integration
+  LONGDESC
+  option "release-type", :type => :string, :required => true
+  def create_pinnings(project_name)
+    puts "INTEGRATION: #{options[:integration]}" if options[:integration]
+    puts "Create pinning configuration for #{options["release-type"]} #{project_name}"
+  end
+
+end
+
+BuildPipeline.start(ARGV)
+
+exit 0
