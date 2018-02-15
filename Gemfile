@@ -13,6 +13,8 @@ gem 'docker_registry2'
 gem 'json'
 gem 'awesome_print'
 gem 'faraday'
+gem 'thor'
+
 
 
 group :development do
