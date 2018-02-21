@@ -98,6 +98,17 @@ module CrossCloudCi
         CrossCloudCi::CiService::ContainerRegistry.download_container(url)
       end
 
+      def create_pinning_config(file=nil)
+        container_name = CrossCloudCi::CiService::ContainerRegistry.extract_image_name(container_image_url)
+        # TODO: support creating a file based on given path and a temp file
+        #<<-PINNING_CONFIG
+        <<~PINNING_CONFIG
+        export IMAGE_ARGS="--set image.repository=#{container_name}"
+        export TAG_ARGS="--set image.tag=#{container_image_tag}"
+        PINNING_CONFIG
+      end
+
+
       def verify_container_artifact(url)
         CrossCloudCi::CiService::ContainerRegistry.verify_artifact(url)
       end

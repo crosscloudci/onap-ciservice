@@ -153,6 +153,29 @@ describe CrossCloudCi::CiService::Onap::BuildPipeline do
 
   end
 
+  describe ".create_pinning_config" do
+    it "create a pinning configuration for the onap so project build artifacts" do
+      config_location = "spec/test-cross-cloud.yml"
+      project_name = "so"
+      release_type = "stable"
+      options = {config_location: config_location, project_name: project_name, release_type: release_type}
+
+      container_image_and_registry = "nexus3.onap.org:10001/openecomp/mso"
+      # container_image_url = "https://nexus3.onap.org:10001/openecomp/mso"
+      # image_tag = "v1.1.1"
+      # container_artifact_url = "#{container_image_url}:#{image_tag}"
+
+      #pipeline = CrossCloudCi::CiService::BuildPipeline.new(options)
+      pipeline = CrossCloudCi::CiService::Onap::BuildPipeline.new(options)
+      pinning_config = pipeline.create_pinning_config
+      expect(pinning_config).to be_truthy
+      expect(pinning_config).to include("export IMAGE_ARGS=\"--set image.repository=#{container_image_and_registry}")
+    end
+  end
+
+
+
+
   # xdescribe ".verify_container_artifact" do
   #   # NOTE: ONAP SO is > 1.5GB
   #   xit "can sucessfully run a test on the downloaded container artifact from onap container registry" do

@@ -70,6 +70,72 @@ describe "bin/build_pipeline", :type => :aruba, :exit_timeout => 600 do
       #expect(last_command_started.exit_status).to eq(1)
     end
   end
+
+  xdescribe "download_container() for head release" do
+    let(:integration_arg) { "--integration=onap" }
+    let(:project_name) { "so" }
+    let(:release_type) { "head" }
+    let(:release_arg) { "--release-type=#{release_type}" }
+    let(:spec_dir) { File.expand_path('../..', __FILE__) }
+    #let(:config_location) { "https://raw.githubusercontent.com/crosscloudci/cncf-configuration/integration/cross-cloud.yml" }
+    let(:config_location) { File.join(spec_dir, "test-cross-cloud.yml") }
+
+    it "retrieves a container configured for that project in config specified in CROSS_CLOUD_YML environment" do
+      ClimateControl.modify CROSS_CLOUD_YML: config_location do
+        cmd_with_args = "#{cmd} download_container #{integration_arg} #{release_arg} #{project_name}"
+        puts "Environment var CROSS_CLOUD_YML: #{ENV['CROSS_CLOUD_YML']}"
+        puts "Running command: #{cmd_with_args}"
+
+        run(cmd_with_args)
+        #expect(last_command_started).to have_output(/DEBUG OUTPUT HERE/)
+        expect(last_command_started).to be_successfully_executed
+      end
+    end
+
+    it "retrieves a container configured for that project in config specified as commandline argument" do
+      config_location_arg = "--cross-cloud-config=#{config_location}"
+      cmd_with_args = "#{cmd} download_container #{integration_arg} #{release_arg} #{config_location_arg} #{project_name}"
+      puts "Running command: #{cmd_with_args}"
+
+      run(cmd_with_args)
+      #expect(last_command_started).to have_output(/DEBUG OUTPUT HERE/)
+      expect(last_command_started).to be_successfully_executed
+    end
+
+    it "exits with an error if the project configuration is not found" do
+      cmd_with_args = "#{cmd} download_container #{integration_arg} #{release_arg} #{project_name}"
+      puts "Running command: #{cmd_with_args}"
+
+      run(cmd_with_args)
+      expect(last_command_started).to have_output(/ERROR -- : Failed to find configuration for project/)
+      #expect(last_command_started.exit_status).to eq(1)
+    end
+  end
+
+  describe "create_pinning" do
+    let(:integration_arg) { "--integration=onap" }
+    let(:project_name) { "so" }
+    let(:release_type) { "stable" }
+    let(:release_arg) { "--release-type=#{release_type}" }
+    let(:spec_dir) { File.expand_path('../..', __FILE__) }
+    #let(:config_location) { "https://raw.githubusercontent.com/crosscloudci/cncf-configuration/integration/cross-cloud.yml" }
+    let(:config_location) { File.join(spec_dir, "test-cross-cloud.yml") }
+    let(:config_location_arg) { "--cross-cloud-config=#{config_location}" }
+
+    it "creates a pinning configuration for the project" do
+      cmd_with_args = "#{cmd} create_pinnings #{integration_arg} #{release_arg} #{config_location_arg} #{project_name}"
+      puts "Running command: #{cmd_with_args}"
+
+      run(cmd_with_args)
+      #expect(last_command_started).to have_output(/DEBUG OUTPUT HERE/)
+      expect(last_command_started).to be_successfully_executed
+    end
+
+
+
+  end
+
+
 end
 
 

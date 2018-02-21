@@ -44,7 +44,7 @@ class BuildPipeline < Thor
     --create-pinning-config will create a artifact pinning configuration
     --pinning-config specifies the path and name of the configuration created
   LONGDESC
-  option "create-pinning-config", :type => :string, :default => false
+  option "create-pinning-config", :type => :boolean, :default => false
   option "pinning-config", :type => :string, :default => "release.env"
   def download_container(project_name)
     @logger.info "INTEGRATION: #{options[:integration]}" if options[:integration]
@@ -70,6 +70,35 @@ class BuildPipeline < Thor
     create_pinnings(project_name) if options["create-pinning-config"]
   end
 
+
+  desc "create_pinnings <project_name>", "Create pinnings configuration for project and release type"
+  long_desc <<-LONGDESC
+    Creates a pinning configuration for the specified project and release type
+
+    --release-type specifies either stable or head (actual version is determined internally)
+    --integration can be used to specifiy an external CI integration
+    --pinning-config specifies the path and name of the configuration created
+  LONGDESC
+  option "pinning-config", :type => :string, :default => "release.env"
+  def create_pinnings(project_name)
+    puts "INTEGRATION: #{options[:integration]}" if options[:integration]
+    puts "Create pinning configuration for #{options["release-type"]} #{project_name}"
+
+    opts = {
+      config_location: config_location,
+      project_name: project_name,
+      release_type: options["release-type"],
+      integration: options["integration"]
+    }
+    opts.merge! options
+
+    pipeline = build_pipeline(opts)
+
+    #TODO: support file creation
+    #pipeline.create_pinning_config(option["pinning-config"])
+    puts pipeline.create_pinning_config
+  end
+
   desc "delete_container <project_name>", "Delete local cached container for a project"
   long_desc <<-LONGDESC
     Deletes a local container image from the cache
@@ -78,21 +107,6 @@ class BuildPipeline < Thor
     --integration can be used to specifiy an external CI integration
   LONGDESC
   def delete_container(project_name)
-    puts "INTEGRATION: #{options[:integration]}" if options[:integration]
-    puts "Deleting container image from cache for #{options["release_type"]} #{project_name}"
-  end
-
-  desc "create_pinnings <project_name>", "Create pinnings configuration for project and release type"
-  long_desc <<-LONGDESC
-    Creates a pinning configuration for the specified project and release type
-
-    --release-type specifies either stable or head (actual version is determined internally)
-    --integration can be used to specifiy an external CI integration
-    --create-pinning-config will create a artifact pinning configuration
-    --pinning-config specifies the path and name of the configuration created
-  LONGDESC
-  option "pinning-config", :type => :string, :default => "release.env"
-  def create_pinnings(project_name)
     puts "INTEGRATION: #{options[:integration]}" if options[:integration]
     puts "Deleting container image from cache for #{options["release_type"]} #{project_name}"
   end
