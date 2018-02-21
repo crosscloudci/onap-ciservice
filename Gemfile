@@ -26,4 +26,6 @@ group :test do
   gem 'aruba'
   gem 'vcr'
   gem 'webmock'
+  gem 'guard'
+  gem 'guard-rspec'
 end
