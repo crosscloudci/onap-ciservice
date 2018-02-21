@@ -13,6 +13,7 @@ module CrossCloudCi
 
     class << self; attr_accessor :config_path; end
 
+    # TODO: catch 404
     def self.load_config(s=nil)
       if s
         uri = URI.parse(s)

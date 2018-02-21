@@ -5,6 +5,10 @@ require 'yaml'
 
 describe CrossCloudCi::Utils do
   describe '.load_config' do
+    xit 'raises an error if the remote URL returns a 404' do
+      # do raise
+    end
+
     it 'defaults to local config' do
       CrossCloudCi::Utils.config_path = "spec/test-cross-cloud.yml"
       
