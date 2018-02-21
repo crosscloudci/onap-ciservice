@@ -9,11 +9,8 @@ require 'byebug'
 require 'crosscloudci/ciservice/onap/build_pipeline'
 
 module CrossCloudCi
-  puts "[Base] CrossCloudCi before Ciservice (not onap) start"
   module CiService
-  puts "[Base] CrossCloudCi Ciservice before build pipelines start"
     class BuildPipeline
-    puts "[Base] CrossCloudCi BuildPipeline class"
       attr_accessor :cross_cloud_config, :project_name, :release_type
       attr_accessor :integration
       #attr_accessor :container_image_url, :container_registry, :image_name, :image_tag

@@ -30,7 +30,7 @@ describe "bin/build_pipeline", :type => :aruba, :exit_timeout => 600 do
     expect([file]).to include an_existing_file
   end
 
-  describe "download_container stable release" do
+  describe "download_container() for stable release" do
     let(:integration_arg) { "--integration=onap" }
     let(:project_name) { "so" }
     let(:release_type) { "stable" }

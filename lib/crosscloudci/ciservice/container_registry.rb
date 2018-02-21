@@ -52,7 +52,7 @@ module CrossCloudCi
       #   # if opts[:delete]
       #   #   delete_local_artifact(url)
       #   # end
-        #raise ContainerVerifyError, "Container::Registry: problem with container from #{image_url}" unless $?.success?
+        #raise ContainerVerifyError, "Container::Registry: problem with container from #{image_name}" unless $?.success?
       #
       #  # TODO: use docker run on container to run tests
       # end
@@ -88,35 +88,39 @@ module CrossCloudCi
         #   pull_results = reg.pull(namespacerepo, tag, opts[:path])
         # end
        
-        image_url = extract_image_url(url)
+        image_name = extract_image_name(url, {tag: true})
 
         # TODO: capture exit code and stderr
-				pull_results = IO.popen(['docker', 'pull', image_url], in: :in) do |io|
+				pull_results = IO.popen(['docker', 'pull', image_name], in: :in) do |io|
 				 io.read
 				end
 
-        raise ContainerDownloadError, "Container::Registry: docker pull failed for #{image_url}" unless $?.success?
+        raise ContainerDownloadError, "Container::Registry: docker pull failed for #{image_name}" unless $?.success?
         pull_results
       end
 
       def self.delete_local_artifact(url, opts={})
-        image_url = extract_image_url(url)
-        puts "deleting #{image_url}"
-				results = IO.popen(['docker', 'image', 'rm', image_url], in: :in) do |io|
+        image_name = extract_image_name(url, {tag: true})
+        puts "deleting #{image_name}"
+				IO.popen(['docker', 'image', 'rm', image_name], in: :in) do |io|
 				 io.read
 				end
 
-        #raise ContainerVerifyError, "Container::Registry: docker pull failed for #{image_url}" unless $?.success?
+        #raise ContainerVerifyError, "Container::Registry: docker pull failed for #{image_name}" unless $?.success?
         $?.success?
       end
 
-      def self.extract_image_url(url)
+      def self.extract_image_name(url, opts={})
         url_parts = url.match("(?:([^:]*)://)?([^/]*)([^:]*)?:?(.*)?").to_a
 
         proto, hostport, namespacerepo, tag = url_parts.slice(1, url_parts.length)
         namespacerepo.sub!("/","")
 
-        "#{hostport}/#{namespacerepo}:#{tag}"
+        if opts[:tag]
+          "#{hostport}/#{namespacerepo}:#{tag}"
+        else
+          "#{hostport}/#{namespacerepo}"
+        end
       end 
     end # ContainerRegistry
   end # CiService

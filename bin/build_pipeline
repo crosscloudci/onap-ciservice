@@ -24,12 +24,13 @@ class BuildPipeline < Thor
 
   @@DEFAULT_CROSSCLOUD_CONFIG = "https://raw.githubusercontent.com/crosscloudci/cncf-configuration/master/cross-cloud.yml"
 
-  attr_accessor :logger
+  attr_accessor :logger, :config_location, :pipeline
 
   def initialize(*args)
     # TODO: add options for enable/disable output. eg. https://gist.github.com/guyhughes/ea9ae37dfe12ee3c7292
     @logger = Logger.new(STDOUT)
     @logger.level = Logger::DEBUG
+
     super *args
   end
 
@@ -49,15 +50,6 @@ class BuildPipeline < Thor
     @logger.info "INTEGRATION: #{options[:integration]}" if options[:integration]
     @logger.info "Downloading #{options["release-type"]} #{project_name} container"
 
-    #config_location = "/home/pair/src/taylor/cncf/onap-ciservice/spec/test-cross-cloud.yml"
-    if options["cross-cloud-config"]
-      config_location = options["cross-cloud-config"]
-    elsif ENV["CROSS_CLOUD_YML"]
-      config_location = ENV["CROSS_CLOUD_YML"] 
-    else
-      config_location = @@DEFAULT_CROSSCLOUD_CONFIG
-    end
-
     opts = {
       config_location: config_location,
       project_name: project_name,
@@ -66,59 +58,8 @@ class BuildPipeline < Thor
     }
     opts.merge! options
 
-    # TODO: Raise error if project not found in config (here or in lib)
-    #pipeline = CrossCloudCi::CiService::BuildPipeline.new(opts)
-    begin 
-      pipeline = CrossCloudCi::CiService::Onap::BuildPipeline.new(opts)
-    rescue CrossCloudCi::CiService::BuildPipeline::MissingProjectConfig
-      @logger.error "Failed to find configuration for project '#{project_name}' in #{config_location}"
-      exit 1
-    end
+    pipeline = build_pipeline(opts)
 
-
-    pipeline.logger.level = Logger::DEBUG
-
-    ## Overview of process for downloading containers
-    #
-    # What we need for creating a container image url
-    #  - registry host
-    #  - container repo and name
-    #  - container tag
-    #  - NOTE: registry host + container repo and name are normally set together in cross-cloud.yml or HELM charts
-    #
-    # NOTE: we support downloading a single container for a project
-    #  - only the app container.  not a e2e container or anything else
-    #
-    # What we need about for choosing the container to download
-    #  - project name
-    #  - release type: stable/head
-    # 
-    # BuildPipeline parses the options given which include location of cross-cloud.yml, release type and project name
-    # BuildPipeline downloads and parses the cross-cloud.yml
-    # The container image url is pulled from the cross-cloud.yml config
-    #
-    # NOTE: The image tag and URL are project specific
-    #
-    # Next we find the image tag which is
-    #  - ref, from cross-cloud.yml, for stable release
-    #  - dynamically found from Jenkins for head 
-
-    # #image_tag = "v1.1.1"
-    # release_type = options["release-type"]
-    # case release_type  
-    # when "stable"
-    #   image_tag = pipeline.project_config["stable_ref"]
-    # else
-    #   # TODO: pull image tag from Jenkins
-    #   # TBD in 317
-    # end
-
-    # #container_image_url = "https://nexus3.onap.org:10001/openecomp/mso"
-    # container_image_url = pipeline.project_config["container_image_url"] 
-    # container_image_url = pipeline.container_image_url
-    # container_artifact_url = "#{container_image_url}:#{image_tag}"
-
-    # container_artifact_url = pipeline.get_image_url(release)
     #pipeline.download_container(container_artifact_url)
     download_status = pipeline.download_container
     unless download_status
@@ -153,8 +94,39 @@ class BuildPipeline < Thor
   option "pinning-config", :type => :string, :default => "release.env"
   def create_pinnings(project_name)
     puts "INTEGRATION: #{options[:integration]}" if options[:integration]
-    puts "Create pinning configuration for #{options["release-type"]} #{project_name}"
+    puts "Deleting container image from cache for #{options["release_type"]} #{project_name}"
   end
+
+
+  private
+
+  def config_location
+    if options["cross-cloud-config"]
+      @config_location = options["cross-cloud-config"]
+    elsif ENV["CROSS_CLOUD_YML"]
+      @config_location = ENV["CROSS_CLOUD_YML"] 
+    else
+      @config_location = @@DEFAULT_CROSSCLOUD_CONFIG
+    end
+    @config_location
+  end
+
+  def build_pipeline(opts)
+    # TODO: Raise error if project not found in config (here or in lib)
+    #pipeline = CrossCloudCi::CiService::BuildPipeline.new(opts)
+    begin 
+      @pipeline = CrossCloudCi::CiService::Onap::BuildPipeline.new(opts)
+    rescue CrossCloudCi::CiService::BuildPipeline::MissingProjectConfig
+      @logger.error "Failed to find configuration for project '#{opts['project_name']}' in #{opts['config_location']}"
+      exit 1
+    end
+
+    @pipeline.logger.level = Logger::DEBUG
+    @pipeline
+  end
+
+
+
 
 end
 

@@ -66,5 +66,15 @@ describe CrossCloudCi::CiService::ContainerRegistry do
       # TODO: use download container method
     end
   end
+
+  describe ".extract_image_name" do
+    it "can sucessfully extract the image name, registry, port from the given url" do
+      container_image_url = "https://registry.hub.docker.com/library/busybox"
+      image_tag = "latest"
+      container_image_url_with_tag = "#{container_image_url}:#{image_tag}"
+
+      expect(CrossCloudCi::CiService::ContainerRegistry.extract_image_name(container_image_url_with_tag)).to be_truthy
+    end
+  end
 end
 

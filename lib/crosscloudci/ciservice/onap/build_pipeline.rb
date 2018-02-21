@@ -63,7 +63,6 @@ module CrossCloudCi
           "#{image_url}:#{tag}"
         end
 
-
       end
     end
   end
