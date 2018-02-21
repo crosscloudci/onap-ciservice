@@ -139,7 +139,10 @@ class BuildPipeline < Thor
 
     --release-type specifies either stable or head (actual version is determined internally)
     --integration can be used to specifiy an external CI integration
+    --create-pinning-config will create a artifact pinning configuration
+    --pinning-config specifies the path and name of the configuration created
   LONGDESC
+  option "pinning-config", :type => :string, :default => "release.env"
   def create_pinnings(project_name)
     puts "INTEGRATION: #{options[:integration]}" if options[:integration]
     puts "Create pinning configuration for #{options["release-type"]} #{project_name}"

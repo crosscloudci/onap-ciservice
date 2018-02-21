@@ -4,8 +4,13 @@ require 'crosscloudci/utils'
 require 'crosscloudci/ciservice/container_registry'
 require 'byebug'
 
+# Integrations
+require 'crosscloudci/onap/ciservice/build_pipeline'
+
 module CrossCloudCi
+  puts "CrossCloudCi before Ciservice (not onap) start"
   module CiService
+  puts "CrossCloudCi Ciservice before build pipelines start"
     class BuildPipeline
       attr_accessor :cross_cloud_config, :project_name, :release_type
       attr_accessor :integration
@@ -26,7 +31,12 @@ module CrossCloudCi
         @integration = options[:integration]
         @cross_cloud_config = CrossCloudCi::Utils.load_config(options[:config_location])
 
-        @container_image_url = project_config["container_image_url"] if project_config
+        if @integration == "onap"
+          #@integration_pipeline = CrossCloudCi::Onap::CiService::BuildPipeline.new(options)
+          name = "CrossCloudCi::Onap::CiService::BuildPipeline"
+          klass = name.split("::").inject(Object) { |k,n| k.const_get(n) }
+          @integration_pipeline = klass.new(options)
+        end
       end
 
       # Docker container registry, repo and name
