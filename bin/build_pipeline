@@ -89,7 +89,6 @@ class BuildPipeline < Thor
     create_pinnings(project_name) if options["create-pinning-config"]
   end
 
-
   desc "create_pinnings <project_name>", "Create pinnings configuration for project and release type"
   long_desc <<-LONGDESC
     Creates a pinning configuration for the specified project and release type
@@ -132,6 +131,37 @@ class BuildPipeline < Thor
     puts "Deleting container image from cache for #{options["release_type"]} #{project_name}"
   end
 
+
+  desc "build_status <project_name>", "Retrieve and show the build status"
+  long_desc <<-LONGDESC
+    Retrieves the last build status
+
+    --release-type specifies either stable or head (actual version is determined internally)
+    --integration can be used to specifiy an external CI integration
+  LONGDESC
+  def build_status(project_name)
+    @logger.info "INTEGRATION: #{options["integration"]}" if options["integration"]
+    @logger.info "Retrieving the build status for #{options["release-type"]} #{project_name}"
+
+    opts = {
+      config_location: config_location,
+      project_name: project_name,
+      release_type: options["release-type"],
+      integration: options["integration"]
+    }
+    opts.merge! options
+
+    pipeline = build_pipeline(opts)
+
+    begin
+      status = pipeline.build_status
+    rescue CrossCloudCi::CiService::BuildPipeline::UnsupportedRelease
+      status = "n/a"
+    end
+
+    #@logger.info "Build status: #{status}"
+    puts "Build status: #{status}"
+  end
 
   private
 

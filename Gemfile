@@ -14,6 +14,8 @@ gem 'json'
 gem 'awesome_print'
 gem 'faraday'
 gem 'thor'
+gem 'jenkins_api_client'
+
 
 
 

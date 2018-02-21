@@ -29,10 +29,12 @@ module CrossCloudCi
       attr_accessor :integration
       #attr_accessor :container_image_url, :container_registry, :image_name, :image_tag
       attr_accessor :container_registry, :image_name, :image_tag
+      attr_accessor :build_data, :environment_job_data
       attr_accessor :artifact_service
       attr_accessor :logger
 
       class Error < StandardError ;  end
+      class UnsupportedRelease < CrossCloudCi::CiService::BuildPipeline::Error; end
       class UnknownReleaseType < CrossCloudCi::CiService::BuildPipeline::Error; end
       class MissingProjectConfig < CrossCloudCi::CiService::BuildPipeline::Error; end
       class MissingContainerImageUrl < CrossCloudCi::CiService::BuildPipeline::Error; end
