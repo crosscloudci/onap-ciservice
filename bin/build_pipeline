@@ -6,6 +6,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'byebug'
 require 'logger'
 require 'thor'
+require 'crosscloudci/onap/ciservice/build_pipeline'
 require 'crosscloudci/ciservice/build_pipeline'
 
 if ENV["CROSS_CLOUD_CI_ENV"]
@@ -14,41 +15,108 @@ else
   ci_env = "development"
 end
 
-# @logger = Logger.new(STDOUT) 
-# @logger.level = Logger::DEBUG 
-#@logger.info build_pipeline_help 
+
 
 class BuildPipeline < Thor
+  class_option "cross-cloud-config", :type => :string
   class_option :integration, :enum => %w{onap test}
   class_option "release-type", :enum => %w{stable head master}, :required => true
+
+  @@DEFAULT_CROSSCLOUD_CONFIG = "https://raw.githubusercontent.com/crosscloudci/cncf-configuration/master/cross-cloud.yml"
+
+  attr_accessor :logger
+
+  def initialize(*args)
+    # TODO: add options for enable/disable output. eg. https://gist.github.com/guyhughes/ea9ae37dfe12ee3c7292
+    @logger = Logger.new(STDOUT)
+    @logger.level = Logger::DEBUG
+    super *args
+  end
 
   desc "download_container <project_name> [--create-pinning-config=FILENAME]", "Download container for a project from a container registry"
   long_desc <<-LONGDESC
     Downloads the remote container for a project from a registry
 
+    --cross-cloud-config specifies the URL / path to the cross-cloud.yml configuration
     --integration can be used to specifiy an external CI integration
     --release-type specifies either stable or head (actual version is determined internally)
     --create-pinning-config will create a artifact pinning configuration
+    --pinning-config specifies the path and name of the configuration created
   LONGDESC
-  option "create-pinning-config", :type => :string, :default => "release.env"
+  option "create-pinning-config", :type => :string, :default => false
+  option "pinning-config", :type => :string, :default => "release.env"
   def download_container(project_name)
-    puts "INTEGRATION: #{options[:integration]}" if options[:integration]
-    puts "Downloading #{options["release-type"]} #{project_name} container"
+    @logger.info "INTEGRATION: #{options[:integration]}" if options[:integration]
+    @logger.info "Downloading #{options["release-type"]} #{project_name} container"
 
-    config_location = "spec/test-cross-cloud.yml"
-    project_name = "busybox"
-    options = {config_location: config_location, project_name: project_name}
+    #config_location = "/home/pair/src/taylor/cncf/onap-ciservice/spec/test-cross-cloud.yml"
+    if options["cross-cloud-config"]
+      config_location = options["cross-cloud-config"]
+    elsif ENV["CROSS_CLOUD_YML"]
+      config_location = ENV["CROSS_CLOUD_YML"] 
+    else
+      config_location = @@DEFAULT_CROSSCLOUD_CONFIG
+    end
 
-    container_image_url = "registry.hub.docker.com/library/busybox"
-    # image_tag = "latest"
+    opts = {
+      config_location: config_location,
+      project_name: project_name,
+      release_type: options["release-type"],
+      integration: options["integration"]
+    }
+    opts.merge! options
+
+    # TODO: Raise error if project not found in config (here or in lib)
+    #pipeline = CrossCloudCi::CiService::BuildPipeline.new(opts)
+    pipeline = CrossCloudCi::Onap::CiService::BuildPipeline.new(opts)
+
+    ## Overview of process for downloading containers
+    #
+    # What we need for creating a container image url
+    #  - registry host
+    #  - container repo and name
+    #  - container tag
+    #  - NOTE: registry host + container repo and name are normally set together in cross-cloud.yml or HELM charts
+    #
+    # NOTE: we support downloading a single container for a project
+    #  - only the app container.  not a e2e container or anything else
+    #
+    # What we need about for choosing the container to download
+    #  - project name
+    #  - release type: stable/head
+    # 
+    # BuildPipeline parses the options given which include location of cross-cloud.yml, release type and project name
+    # BuildPipeline downloads and parses the cross-cloud.yml
+    # The container image url is pulled from the cross-cloud.yml config
+    #
+    # NOTE: The image tag and URL are project specific
+    #
+    # Next we find the image tag which is
+    #  - ref, from cross-cloud.yml, for stable release
+    #  - dynamically found from Jenkins for head 
+
+    # #image_tag = "v1.1.1"
+    # release_type = options["release-type"]
+    # case release_type  
+    # when "stable"
+    #   image_tag = pipeline.project_config["stable_ref"]
+    # else
+    #   # TODO: pull image tag from Jenkins
+    #   # TBD in 317
+    # end
+
+    # #container_image_url = "https://nexus3.onap.org:10001/openecomp/mso"
+    # container_image_url = pipeline.project_config["container_image_url"] 
+    # container_image_url = pipeline.container_image_url
     # container_artifact_url = "#{container_image_url}:#{image_tag}"
 
-    image_tag = "v1.1.1"
-    container_image_url = "https://nexus3.onap.org:10001/openecomp/mso"
-    container_artifact_url = "#{container_image_url}:#{image_tag}"
-
-    pipeline = CrossCloudCi::CiService::BuildPipeline.new(options)
-    pipeline.download_container(container_artifact_url)
+    # container_artifact_url = pipeline.get_image_url(release)
+    #pipeline.download_container(container_artifact_url)
+    download_status = pipeline.download_container
+    unless download_status
+      puts "Downloading container image for #{project_name} failed"
+      exit 1
+    end
 
     create_pinnings(project_name) if options["create-pinning-config"]
   end
