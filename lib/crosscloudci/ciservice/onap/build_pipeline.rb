@@ -3,15 +3,10 @@
 require 'crosscloudci/ciservice/build_pipeline'
 require 'crosscloudci/utils'
 
-
 module CrossCloudCi
-  puts "[ONAP] CrossCloudCi module before Ciservice"
   module CiService;
-    puts "[ONAP] CrossCloudCi CiService module before Onap module"
     module Onap
-      puts "[ONAP] CrossCloudCi CiService Onap module before BuildPipeline class"
       class BuildPipeline < CrossCloudCi::CiService::BuildPipeline
-        puts "[ONAP] CrossCloudCi BuildPipeline class"
 
         # TODO: check release logic
         def container_image_tag(release_type=nil)

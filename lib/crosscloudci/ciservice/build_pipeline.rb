@@ -26,7 +26,7 @@ module CrossCloudCi
 
       def initialize(options = {})
         @logger = Logger.new(STDOUT)
-        @logger.level = Logger::ERROR
+        @logger.level = Logger::WARN
 
         # TODO: Enforce required options
         #   - project_name
