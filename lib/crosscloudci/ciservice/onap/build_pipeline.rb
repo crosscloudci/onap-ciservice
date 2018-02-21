@@ -1,7 +1,5 @@
 # encoding: UTF-8
 
-#  uninitialized constant CrossCloudCi::Onap::CiService::BuildPipeline
-
 require 'crosscloudci/ciservice/build_pipeline'
 require 'crosscloudci/utils'
 
@@ -11,22 +9,9 @@ module CrossCloudCi
   module CiService;
     puts "[ONAP] CrossCloudCi CiService module before Onap module"
     module Onap
-      #include CrossCloudCi::CiService
       puts "[ONAP] CrossCloudCi CiService Onap module before BuildPipeline class"
       class BuildPipeline < CrossCloudCi::CiService::BuildPipeline
         puts "[ONAP] CrossCloudCi BuildPipeline class"
-
-        def initialize(options = {})
-          # TODO: Enforce required options
-          #   - project_name
-          #   - release-type
-          #   - config_location
-          @project_name = options[:project_name]
-          @release_type = options[:release_type]
-          @integration = options[:integration]
-          @cross_cloud_config = CrossCloudCi::Utils.load_config(options[:config_location])
-        end
-
 
         # TODO: check release logic
         def container_image_tag(release_type=nil)

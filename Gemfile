@@ -28,4 +28,5 @@ group :test do
   gem 'webmock'
   gem 'guard'
   gem 'guard-rspec'
+  gem 'climate_control'
 end

@@ -2,10 +2,11 @@
 
 require 'crosscloudci/utils'
 require 'crosscloudci/ciservice/container_registry'
+require 'logger'
 require 'byebug'
 
 # Integrations
-#require 'crosscloudci/ciservice/onap/build_pipeline'
+require 'crosscloudci/ciservice/onap/build_pipeline'
 
 module CrossCloudCi
   puts "[Base] CrossCloudCi before Ciservice (not onap) start"
@@ -18,13 +19,18 @@ module CrossCloudCi
       #attr_accessor :container_image_url, :container_registry, :image_name, :image_tag
       attr_accessor :container_registry, :image_name, :image_tag
       attr_accessor :artifact_service
+      attr_accessor :logger
 
       class Error < StandardError ;  end
       class UnknownReleaseType < CrossCloudCi::CiService::BuildPipeline::Error; end
+      class MissingProjectConfig < CrossCloudCi::CiService::BuildPipeline::Error; end
       class MissingContainerImageUrl < CrossCloudCi::CiService::BuildPipeline::Error; end
       class MissingContainerImageTag < CrossCloudCi::CiService::BuildPipeline::Error; end
 
       def initialize(options = {})
+        @logger = Logger.new(STDOUT)
+        @logger.level = Logger::ERROR
+
         # TODO: Enforce required options
         #   - project_name
         #   - release-type
@@ -34,12 +40,16 @@ module CrossCloudCi
         @integration = options[:integration]
         @cross_cloud_config = CrossCloudCi::Utils.load_config(options[:config_location])
 
-        # if @integration == "onap"
-        #   #@integration_pipeline = CrossCloudCi::Onap::CiService::BuildPipeline.new(options)
-        #   name = "CrossCloudCi::Onap::CiService::BuildPipeline"
-        #   klass = name.split("::").inject(Object) { |k,n| k.const_get(n) }
-        #   @integration_pipeline = klass.new(options)
-        # end
+        raise MissingProjectConfig.new("Configuration not found for project #{project_name}") unless project_config
+
+        if self.class.name == "CrossCloudCi::CiService::BuildPipeline"
+          if @integration == "onap"
+            #@integration_pipeline = CrossCloudCi::Onap::CiService::BuildPipeline.new(options)
+            name = "CrossCloudCi::CiService::Onap::BuildPipeline"
+            klass = name.split("::").inject(Object) { |k,n| k.const_get(n) }
+            @integration_pipeline = klass.new(options)
+          end
+        end
       end
 
       # Docker container registry, repo and name
@@ -86,7 +96,7 @@ module CrossCloudCi
           url = (tag.nil?) ? image_url : "#{image_url}:#{tag}" 
         end
 
-        puts "url: #{url}"
+        @logger.info "[Onap BuildPipeline] container image url: #{url}"
 
         CrossCloudCi::CiService::ContainerRegistry.download_container(url)
       end

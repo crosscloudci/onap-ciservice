@@ -7,7 +7,7 @@ require 'byebug'
 require 'logger'
 require 'thor'
 require 'crosscloudci/ciservice/onap/build_pipeline'
-require 'crosscloudci/ciservice/build_pipeline'
+#require 'crosscloudci/ciservice/build_pipeline'
 
 if ENV["CROSS_CLOUD_CI_ENV"]
   ci_env = ENV["CROSS_CLOUD_CI_ENV"]
@@ -68,7 +68,15 @@ class BuildPipeline < Thor
 
     # TODO: Raise error if project not found in config (here or in lib)
     #pipeline = CrossCloudCi::CiService::BuildPipeline.new(opts)
-    pipeline = CrossCloudCi::CiService::Onap::BuildPipeline.new(opts)
+    begin 
+      pipeline = CrossCloudCi::CiService::Onap::BuildPipeline.new(opts)
+    rescue CrossCloudCi::CiService::BuildPipeline::MissingProjectConfig
+      @logger.error "Failed to find configuration for project '#{project_name}' in #{config_location}"
+      exit 1
+    end
+
+
+    pipeline.logger.level = Logger::DEBUG
 
     ## Overview of process for downloading containers
     #

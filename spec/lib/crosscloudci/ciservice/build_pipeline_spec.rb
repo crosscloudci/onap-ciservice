@@ -7,7 +7,7 @@ describe CrossCloudCi::CiService::BuildPipeline do
     it 'it loads the cross-cloud.yml config and sets project_name' do
       #config_location = "https://raw.githubusercontent.com/crosscloudci/cncf-configuration/master/cross-cloud.yml"
       config_location = "spec/test-cross-cloud.yml"
-      project_name = "onap-so"
+      project_name = "so"
       options = {config_location: config_location, project_name: project_name, release_type: "stable"}
 
       pipeline = CrossCloudCi::CiService::BuildPipeline.new(options)
@@ -21,7 +21,7 @@ describe CrossCloudCi::CiService::BuildPipeline do
   describe ".project_config" do
     it "returns the project specific config from cross-cloud.yml" do
       config_location = "spec/test-cross-cloud.yml"
-      #project_name = "onap-so"
+      #project_name = "so"
       project_name = "kubernetes"
       options = {config_location: config_location, project_name: project_name, "release-type": "stable"}
 
@@ -65,7 +65,7 @@ describe CrossCloudCi::CiService::BuildPipeline do
     # INTEGRATION TEST
     it "can sucessfully download a docker container dynamically found for project with an integration" do
       config_location = "spec/test-cross-cloud.yml"
-      project_name = "onap-so"
+      project_name = "so"
       release_type = "stable"
       integration = "onap"
       options = {config_location: config_location, project_name: project_name, release_type: release_type, integration: integration}

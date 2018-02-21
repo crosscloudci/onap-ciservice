@@ -15,7 +15,7 @@ describe CrossCloudCi::CiService::Onap::BuildPipeline do
   describe ".new" do
     it "has access to the cross-cloud config" do
       config_location = "spec/test-cross-cloud.yml"
-      project_name = "onap-so"
+      project_name = "so"
       release_type = "stable"
       options = {config_location: config_location, project_name: project_name, release_type: release_type}
 
@@ -29,7 +29,7 @@ describe CrossCloudCi::CiService::Onap::BuildPipeline do
   describe ".container_image_tag" do
     it "returns an stable image tag when release is stable for the onap so project" do
       config_location = "spec/test-cross-cloud.yml"
-      project_name = "onap-so"
+      project_name = "so"
       release_type = "stable"
       options = {config_location: config_location, project_name: project_name, release_type: release_type}
 
@@ -44,7 +44,7 @@ describe CrossCloudCi::CiService::Onap::BuildPipeline do
 
     xit "returns an head image tag when release is head for the onap so project" do
       config_location = "spec/test-cross-cloud.yml"
-      project_name = "onap-so"
+      project_name = "so"
       release_type = "head"
       options = {config_location: config_location, project_name: project_name, release_type: release_type}
 
@@ -61,7 +61,7 @@ describe CrossCloudCi::CiService::Onap::BuildPipeline do
   describe ".stable_container_image_tag" do
     it "returns an stable image tag for the onap so project" do
       config_location = "spec/test-cross-cloud.yml"
-      project_name = "onap-so"
+      project_name = "so"
       release_type = "stable"
       options = {config_location: config_location, project_name: project_name, release_type: release_type}
 
@@ -78,7 +78,7 @@ describe CrossCloudCi::CiService::Onap::BuildPipeline do
   describe ".head_container_image_tag" do
     xit "returns an head image tag for the onap so project" do
       config_location = "spec/test-cross-cloud.yml"
-      project_name = "onap-so"
+      project_name = "so"
       release_type = "head"
       options = {config_location: config_location, project_name: project_name, release_type: release_type}
 
@@ -101,7 +101,7 @@ describe CrossCloudCi::CiService::Onap::BuildPipeline do
 
     it "builds a container url based on the container image url and the ref for stable releases" do
       config_location = "spec/test-cross-cloud.yml"
-      project_name = "onap-so"
+      project_name = "so"
       release_type = "stable"
       options = {config_location: config_location, project_name: project_name, release_type: release_type}
 
@@ -123,7 +123,7 @@ describe CrossCloudCi::CiService::Onap::BuildPipeline do
     # NOTE: ONAP SO is > 1.5GB
     it "can sucessfully download container specified as method argument from onap container registry" do
       config_location = "spec/test-cross-cloud.yml"
-      project_name = "onap-so"
+      project_name = "so"
       release_type = "stable"
       options = {config_location: config_location, project_name: project_name, release_type: release_type}
 
@@ -138,7 +138,7 @@ describe CrossCloudCi::CiService::Onap::BuildPipeline do
 
     it "can download the stable docker container as found dynamically in the configuration" do
       config_location = "spec/test-cross-cloud.yml"
-      project_name = "onap-so"
+      project_name = "so"
       release_type = "stable"
       options = {config_location: config_location, project_name: project_name, release_type: release_type}
 
@@ -157,7 +157,7 @@ describe CrossCloudCi::CiService::Onap::BuildPipeline do
   #   # NOTE: ONAP SO is > 1.5GB
   #   xit "can sucessfully run a test on the downloaded container artifact from onap container registry" do
   #     config_location = "spec/test-cross-cloud.yml"
-  #     project_name = "onap-so"
+  #     project_name = "so"
   #     options = {config_location: config_location, project_name: project_name}
   #
   #     container_image_url = "https://nexus3.onap.org:10001/openecomp/mso"

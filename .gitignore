@@ -6,3 +6,4 @@ db/datastore*.yml*
 db/datastore.yml*
 logs/*
 db/cache/*
+tmp
