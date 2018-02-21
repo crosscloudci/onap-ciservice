@@ -6,7 +6,7 @@ require 'crosscloudci/utils'
 module CrossCloudCi
   module CiService;
     module Onap
-      class BuildPipeline < CrossCloudCi::CiService::BuildPipeline
+      class BuildPipeline < ::CrossCloudCi::CiService::BuildPipeline
 
         # TODO: check release logic
         def container_image_tag(release_type=nil)
@@ -30,12 +30,12 @@ module CrossCloudCi
         end
 
         # TODO: fix tests
-        def container_image_url
+        def container_image_url(release_type=nil)
           case @release_type
           when "stable"
             stable_container_image_url
           when "head","master","nightly","latest"
-            head_container_artifact_url
+            head_container_image_url
           else
             raise UnknownReleaseType.new(release_type)
           end
@@ -51,13 +51,12 @@ module CrossCloudCi
           ref
         end
 
-        # container artifact is the repostiory, image repo + name, and image tag
-        def stable_container_artifact_url
-          image_url = stable_container_image_url
-          tag = stable_container_image_tag
-          "#{image_url}:#{tag}"
-        end
-
+        # # container artifact is the repostiory, image repo + name, and image tag
+        # def stable_container_artifact_url
+        #   image_url = stable_container_image_url
+        #   tag = stable_container_image_tag
+        #   "#{image_url}:#{tag}"
+        # end
       end
     end
   end

@@ -94,11 +94,7 @@ describe CrossCloudCi::CiService::Onap::BuildPipeline do
 
 
 
-  describe ".container_artifact_url" do
-    xit "builds a container url based on release type given" do
-      # test container_artifact_url
-    end
-
+  describe ".container_artifact_url from onap integration" do
     it "builds a container url based on the container image url and the ref for stable releases" do
       config_location = "spec/test-cross-cloud.yml"
       project_name = "so"
@@ -112,7 +108,7 @@ describe CrossCloudCi::CiService::Onap::BuildPipeline do
       image_tag = "v1.1.1"
       container_artifact_url = "#{container_image_url}:#{image_tag}"
 
-      expect(pipeline.stable_container_artifact_url).to eq(container_artifact_url)
+      expect(pipeline.container_artifact_url).to eq(container_artifact_url)
     end
 
     it "builds a container url based on the container image url and jenkins master/nightly release" do
@@ -158,7 +154,7 @@ describe CrossCloudCi::CiService::Onap::BuildPipeline do
       config_location = "spec/test-cross-cloud.yml"
       project_name = "so"
       release_type = "stable"
-      options = {config_location: config_location, project_name: project_name, release_type: release_type}
+      options = {config_location: config_location, project_name: project_name, release_type: release_type, integration: "onap"}
 
       container_image_and_registry = "nexus3.onap.org:10001/openecomp/mso"
       # container_image_url = "https://nexus3.onap.org:10001/openecomp/mso"
@@ -166,12 +162,14 @@ describe CrossCloudCi::CiService::Onap::BuildPipeline do
       # container_artifact_url = "#{container_image_url}:#{image_tag}"
 
       #pipeline = CrossCloudCi::CiService::BuildPipeline.new(options)
-      pipeline = CrossCloudCi::CiService::Onap::BuildPipeline.new(options)
+      #pipeline = CrossCloudCi::CiService::Onap::BuildPipeline.new(options)
+      pipeline = CrossCloudCi::CiService.build_pipeline(options)
       pinning_config = pipeline.create_pinning_config
       expect(pinning_config).to be_truthy
       expect(pinning_config).to include("export IMAGE_ARGS=\"--set image.repository=#{container_image_and_registry}")
     end
   end
+
 
 
 
