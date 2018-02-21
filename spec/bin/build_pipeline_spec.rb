@@ -1,22 +1,9 @@
 require 'spec_helper'
 
-RSpec.describe 'Integrate Aruba into RSpec', :type => :aruba do
-  context 'when to be or not be...' do
-    it { expect(aruba).to be }
-  end
-
-  context 'when write file' do
-    let(:file) { 'file.txt' }
-
-    before(:each) { write_file file, 'Hello World' }
-
-    it { expect(file).to be_an_existing_file }
-    it { expect([file]).to include an_existing_file }
-  end
-end
+# TODO: Add tests for all arguments and options to build_pipeline
 
 # Gitlab command to test:
-describe "bin/build_pipeline", :type => :aruba do
+describe "bin/build_pipeline", :type => :aruba, :exit_timeout => 600 do
   # build_pipeline artifact verify_container $CONTAINER_URL
   #
   let(:cmd) { 'bin/build_pipeline' }
@@ -43,11 +30,21 @@ describe "bin/build_pipeline", :type => :aruba do
     expect([file]).to include an_existing_file
   end
 
-  # INTEGRATION_NAME="onap-mso"
-  # build_pipeline --integration $INTEGRATION_NAME artifact verify_container $CONTAINER_URL 
-  describe "ONAP Integration" do
-    xit "verifies the ONAP docker container given is accessible and valid" do
+  describe "download_container" do
+    it "retrieves a container for the project given for the registry configured for that project" do
+      release_type = "stable"
+      release_arg = "--release-type=#{release_type}"
+      integration_arg = "--integration=onap"
+      project_name = "so"
+      cmd_with_args = "#{cmd} download_container #{integration_arg} #{release_arg} #{project_name}"
+      puts "Running command: #{cmd_with_args}"
+
+      run(cmd_with_args)
+      expect(last_command_started).to have_output /DEBUG OUTPUT HERE/
+      expect(last_command_started).to be_successfully_executed
     end
   end
 end
+
+
  
