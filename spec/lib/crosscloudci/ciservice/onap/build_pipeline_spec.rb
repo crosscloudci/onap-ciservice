@@ -1,7 +1,7 @@
 
 # encoding: UTF-8
 
-require 'crosscloudci/onap/ciservice/build_pipeline'
+require 'crosscloudci/ciservice/onap/build_pipeline'
 require 'webmock'
 require 'vcr'
 
@@ -11,7 +11,7 @@ VCR.configure do |c|
   c.allow_http_connections_when_no_cassette = true
 end
 
-describe CrossCloudCi::Onap::CiService::BuildPipeline do
+describe CrossCloudCi::CiService::Onap::BuildPipeline do
   describe ".new" do
     it "has access to the cross-cloud config" do
       config_location = "spec/test-cross-cloud.yml"
@@ -19,8 +19,8 @@ describe CrossCloudCi::Onap::CiService::BuildPipeline do
       release_type = "stable"
       options = {config_location: config_location, project_name: project_name, release_type: release_type}
 
-      pipeline = CrossCloudCi::Onap::CiService::BuildPipeline.new(options)
-      expect(pipeline).to be_a(CrossCloudCi::Onap::CiService::BuildPipeline)
+      pipeline = CrossCloudCi::CiService::Onap::BuildPipeline.new(options)
+      expect(pipeline).to be_a(CrossCloudCi::CiService::Onap::BuildPipeline)
       expect(pipeline).to be_a(CrossCloudCi::CiService::BuildPipeline)
       expect(pipeline.cross_cloud_config).to be_truthy
     end
@@ -33,7 +33,7 @@ describe CrossCloudCi::Onap::CiService::BuildPipeline do
       release_type = "stable"
       options = {config_location: config_location, project_name: project_name, release_type: release_type}
 
-      pipeline = CrossCloudCi::Onap::CiService::BuildPipeline.new(options)
+      pipeline = CrossCloudCi::CiService::Onap::BuildPipeline.new(options)
 
       #container_image_url = "https://nexus3.onap.org:10001/openecomp/mso"
       image_tag = "v1.1.1"
@@ -48,7 +48,7 @@ describe CrossCloudCi::Onap::CiService::BuildPipeline do
       release_type = "head"
       options = {config_location: config_location, project_name: project_name, release_type: release_type}
 
-      pipeline = CrossCloudCi::Onap::CiService::BuildPipeline.new(options)
+      pipeline = CrossCloudCi::CiService::Onap::BuildPipeline.new(options)
 
       #container_image_url = "https://nexus3.onap.org:10001/openecomp/mso"
       image_tag = "v1.1.1"
@@ -65,7 +65,7 @@ describe CrossCloudCi::Onap::CiService::BuildPipeline do
       release_type = "stable"
       options = {config_location: config_location, project_name: project_name, release_type: release_type}
 
-      pipeline = CrossCloudCi::Onap::CiService::BuildPipeline.new(options)
+      pipeline = CrossCloudCi::CiService::Onap::BuildPipeline.new(options)
 
       #container_image_url = "https://nexus3.onap.org:10001/openecomp/mso"
       image_tag = "v1.1.1"
@@ -82,7 +82,7 @@ describe CrossCloudCi::Onap::CiService::BuildPipeline do
       release_type = "head"
       options = {config_location: config_location, project_name: project_name, release_type: release_type}
 
-      pipeline = CrossCloudCi::Onap::CiService::BuildPipeline.new(options)
+      pipeline = CrossCloudCi::CiService::Onap::BuildPipeline.new(options)
 
       #container_image_url = "https://nexus3.onap.org:10001/openecomp/mso"
       image_tag = "v1.1.1"
@@ -105,7 +105,7 @@ describe CrossCloudCi::Onap::CiService::BuildPipeline do
       release_type = "stable"
       options = {config_location: config_location, project_name: project_name, release_type: release_type}
 
-      pipeline = CrossCloudCi::Onap::CiService::BuildPipeline.new(options)
+      pipeline = CrossCloudCi::CiService::Onap::BuildPipeline.new(options)
       expect(pipeline).to be_a(CrossCloudCi::CiService::BuildPipeline)
 
       container_image_url = "https://nexus3.onap.org:10001/openecomp/mso"
@@ -132,7 +132,7 @@ describe CrossCloudCi::Onap::CiService::BuildPipeline do
       container_artifact_url = "#{container_image_url}:#{image_tag}"
 
       #pipeline = CrossCloudCi::CiService::BuildPipeline.new(options)
-      pipeline = CrossCloudCi::Onap::CiService::BuildPipeline.new(options)
+      pipeline = CrossCloudCi::CiService::Onap::BuildPipeline.new(options)
       expect(pipeline.download_container(container_artifact_url)).to be_truthy
     end
 
@@ -147,7 +147,7 @@ describe CrossCloudCi::Onap::CiService::BuildPipeline do
       # container_artifact_url = "#{container_image_url}:#{image_tag}"
 
       #pipeline = CrossCloudCi::CiService::BuildPipeline.new(options)
-      pipeline = CrossCloudCi::Onap::CiService::BuildPipeline.new(options)
+      pipeline = CrossCloudCi::CiService::Onap::BuildPipeline.new(options)
       expect(pipeline.download_container).to be_truthy
     end
 

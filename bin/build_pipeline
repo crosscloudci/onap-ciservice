@@ -6,7 +6,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'byebug'
 require 'logger'
 require 'thor'
-require 'crosscloudci/onap/ciservice/build_pipeline'
+require 'crosscloudci/ciservice/onap/build_pipeline'
 require 'crosscloudci/ciservice/build_pipeline'
 
 if ENV["CROSS_CLOUD_CI_ENV"]
@@ -68,7 +68,7 @@ class BuildPipeline < Thor
 
     # TODO: Raise error if project not found in config (here or in lib)
     #pipeline = CrossCloudCi::CiService::BuildPipeline.new(opts)
-    pipeline = CrossCloudCi::Onap::CiService::BuildPipeline.new(opts)
+    pipeline = CrossCloudCi::CiService::Onap::BuildPipeline.new(opts)
 
     ## Overview of process for downloading containers
     #

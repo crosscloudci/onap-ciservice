@@ -1,10 +1,10 @@
 # encoding: UTF-8
 
-require 'crosscloudci/onap/ciservice/client'
+require 'crosscloudci/ciservice/onap/client'
 
 module CrossCloudCi
-  module Onap
-    module CiService
+  module CiService
+    module Onap
       # Create a ONAP CiService client:
       #
       # A default client is created if options is omitted.

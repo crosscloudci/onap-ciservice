@@ -1,8 +1,8 @@
 # encoding: UTF-8
 
 module CrossCloudCi
-  module Onap
-    module CiService
+  module CiService
+    module Onap
       class Client
         attr_accessor :cross_cloud_config
         def initialize(options = {})

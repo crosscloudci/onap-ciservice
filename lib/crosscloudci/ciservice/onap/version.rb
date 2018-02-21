@@ -1,8 +1,8 @@
 # encoding: UTF-8
 
 module CrossCloudCi
-  module Onap
-    module CiService
+  module CiService
+    module Onap
       VERSION = '0.1.0'
     end
   end

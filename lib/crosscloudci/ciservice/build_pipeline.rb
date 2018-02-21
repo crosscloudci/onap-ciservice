@@ -5,13 +5,14 @@ require 'crosscloudci/ciservice/container_registry'
 require 'byebug'
 
 # Integrations
-require 'crosscloudci/onap/ciservice/build_pipeline'
+#require 'crosscloudci/ciservice/onap/build_pipeline'
 
 module CrossCloudCi
-  puts "CrossCloudCi before Ciservice (not onap) start"
+  puts "[Base] CrossCloudCi before Ciservice (not onap) start"
   module CiService
-  puts "CrossCloudCi Ciservice before build pipelines start"
+  puts "[Base] CrossCloudCi Ciservice before build pipelines start"
     class BuildPipeline
+    puts "[Base] CrossCloudCi BuildPipeline class"
       attr_accessor :cross_cloud_config, :project_name, :release_type
       attr_accessor :integration
       #attr_accessor :container_image_url, :container_registry, :image_name, :image_tag
@@ -20,6 +21,8 @@ module CrossCloudCi
 
       class Error < StandardError ;  end
       class UnknownReleaseType < CrossCloudCi::CiService::BuildPipeline::Error; end
+      class MissingContainerImageUrl < CrossCloudCi::CiService::BuildPipeline::Error; end
+      class MissingContainerImageTag < CrossCloudCi::CiService::BuildPipeline::Error; end
 
       def initialize(options = {})
         # TODO: Enforce required options
@@ -31,12 +34,12 @@ module CrossCloudCi
         @integration = options[:integration]
         @cross_cloud_config = CrossCloudCi::Utils.load_config(options[:config_location])
 
-        if @integration == "onap"
-          #@integration_pipeline = CrossCloudCi::Onap::CiService::BuildPipeline.new(options)
-          name = "CrossCloudCi::Onap::CiService::BuildPipeline"
-          klass = name.split("::").inject(Object) { |k,n| k.const_get(n) }
-          @integration_pipeline = klass.new(options)
-        end
+        # if @integration == "onap"
+        #   #@integration_pipeline = CrossCloudCi::Onap::CiService::BuildPipeline.new(options)
+        #   name = "CrossCloudCi::Onap::CiService::BuildPipeline"
+        #   klass = name.split("::").inject(Object) { |k,n| k.const_get(n) }
+        #   @integration_pipeline = klass.new(options)
+        # end
       end
 
       # Docker container registry, repo and name
@@ -76,12 +79,14 @@ module CrossCloudCi
       def download_container(url=nil)
         if url.nil?
           image_url = container_image_url
+          raise MissingContainerImageUrl.new("Container image url not found for project=#{@project_name} release=#{@release_type}") if image_url.nil?
 
-          # TODO: get tag
           tag = container_image_tag
-          byebug
-          url = "#{image_url}:#{tag}"
+
+          url = (tag.nil?) ? image_url : "#{image_url}:#{tag}" 
         end
+
+        puts "url: #{url}"
 
         CrossCloudCi::CiService::ContainerRegistry.download_container(url)
       end

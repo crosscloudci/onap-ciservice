@@ -5,13 +5,16 @@
 require 'crosscloudci/ciservice/build_pipeline'
 require 'crosscloudci/utils'
 
+
 module CrossCloudCi
-  puts "CrossCloudCi before Onap start"
-  module Onap
-  puts "CrossCloudCi Onap before Ciservice"
-    module CiService;
-      puts "CrossCloudCi Onap before BuildPipeline"
+  puts "[ONAP] CrossCloudCi module before Ciservice"
+  module CiService;
+    puts "[ONAP] CrossCloudCi CiService module before Onap module"
+    module Onap
+      #include CrossCloudCi::CiService
+      puts "[ONAP] CrossCloudCi CiService Onap module before BuildPipeline class"
       class BuildPipeline < CrossCloudCi::CiService::BuildPipeline
+        puts "[ONAP] CrossCloudCi BuildPipeline class"
 
         def initialize(options = {})
           # TODO: Enforce required options
@@ -80,4 +83,4 @@ module CrossCloudCi
     end
   end
 end
- 
+
