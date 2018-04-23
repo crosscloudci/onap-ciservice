@@ -52,13 +52,13 @@ describe CrossCloudCi::CiService::Onap::BuildPipeline do
 
       #image_tag = "1.2.0-STAGING-latest"
       #image_tag = "1.2.0-STAGING-latest"
-      image_tag_postfix = "-STAGING-latest"
+      #image_tag_postfix = "-STAGING-latest"
 
-      
+      #container_image_tag = pipeline.container_image_tag
       container_image_tag = pipeline.container_image_tag
 
       expect(container_image_tag).to  be_truthy
-      expect(container_image_tag).to  including(image_tag_postfix)
+      #expect(container_image_tag).to  including(image_tag_postfix)
     end
   end
 
@@ -79,6 +79,22 @@ describe CrossCloudCi::CiService::Onap::BuildPipeline do
     end
   end
 
+  describe ".jenkins_daily_build_console_data" do
+    it "returns text console data for a given build" do
+      config_location = "spec/test-cross-cloud.yml"
+      project_name = "so"
+      release_type = "head"
+      options = {config_location: config_location, project_name: project_name, release_type: release_type}
+
+      pipeline = CrossCloudCi::CiService::Onap::BuildPipeline.new(options)
+
+      log_data = pipeline.jenkins_daily_build_console_data
+
+      expect(log_data).to  be_truthy
+      expect(log_data.lines.count).to be > 0
+    end
+  end
+
   describe ".head_container_image_tag" do
     it "returns an head image tag for the onap so project" do
       config_location = "spec/test-cross-cloud.yml"
@@ -89,13 +105,17 @@ describe CrossCloudCi::CiService::Onap::BuildPipeline do
       pipeline = CrossCloudCi::CiService::Onap::BuildPipeline.new(options)
 
       #image_tag = "1.2.0-STAGING-latest"
-      image_tag_postfix = "-STAGING-latest"
+      # NOTE: images are no longer tagged with *full* version + STAGING-latest
+      #image_tag_postfix = "-STAGING-latest"
+
+      # from jenkins
+      # 1.2.1-STAGING-20180423T123527Z
+
 
       container_image_tag = pipeline.container_image_tag
 
       expect(container_image_tag).to  be_truthy
-      expect(container_image_tag).to  including(image_tag_postfix)
-
+      #expect(container_image_tag).to  including(image_tag_postfix)
     end
   end
 
@@ -128,7 +148,7 @@ describe CrossCloudCi::CiService::Onap::BuildPipeline do
       expect(pipeline).to be_a(CrossCloudCi::CiService::BuildPipeline)
 
       container_image_url = "https://nexus3.onap.org:10001/openecomp/mso"
-      image_tag_postfix = "-STAGING-latest"
+      #image_tag_postfix = "-STAGING-latest"
 
       # version = pipeline.release_version
       # image_tag = "#{version}#{image_tag_postfix}"
@@ -142,8 +162,7 @@ describe CrossCloudCi::CiService::Onap::BuildPipeline do
 
       # TODO: some check for version in tag?
       expect(pipeline.container_artifact_url).to include(container_image_url)
-      expect(pipeline.container_artifact_url).to include(image_tag_postfix)
-
+      #expect(pipeline.container_artifact_url).to include(image_tag_postfix)
     end
   end
 

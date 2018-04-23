@@ -15,8 +15,10 @@ describe CrossCloudCi::CiService::ContainerRegistry do
 
     it "can sucessfully download a container from the Cross-Cloud container registry" do
       #container_image_url = "https://registry.cncf.ci/coredns/coredns"
-      container_image_url = "https://registry.cncf.ci/coredns/coredns"
-      image_tag = "master.f636930c.48550"
+      #image_tag = "master.f636930c.48550"
+      #https://gitlab.cncf.ci/cncf/cross-cloud/container_registry
+      container_image_url = "https://registry.cncf.ci/kubernetes/kubernetes/kube-scheduler-amd64"
+      image_tag = "v1-9-4.10287.bee2d150"
       container_artifact_url = "#{container_image_url}:#{image_tag}"
       #container_artifact_url = "https://registry.cncf.ci/coredns/coredns:master.f636930c.48550"
       expect(CrossCloudCi::CiService::ContainerRegistry.download_container(container_artifact_url)).to be_truthy
