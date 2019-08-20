@@ -13,7 +13,7 @@ describe CrossCloudCi::CiService::ContainerRegistry do
 ).to be_truthy
     end
 
-    it "can sucessfully download a container from the Cross-Cloud container registry" do
+    xit "can sucessfully download a container from the Cross-Cloud container registry" do
       #container_image_url = "https://registry.cncf.ci/coredns/coredns"
       #image_tag = "master.f636930c.48550"
       #https://gitlab.cncf.ci/cncf/cross-cloud/container_registry
