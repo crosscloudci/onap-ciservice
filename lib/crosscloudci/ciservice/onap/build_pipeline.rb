@@ -26,12 +26,49 @@ module CrossCloudCi
           pipeline.project_config["stable_ref"]
         end
 
+        def jenkins_daily_build_console_data
+          base_console_log_url = "https://logs.onap.org/production/vex-yul-ecomp-jenkins-1/so-master-docker-version-java-daily/"
+
+          job_id = build_job_id("head")
+
+          console_log_url = "#{base_console_log_url}/#{job_id}/console.log.gz"
+
+          response = nil
+          tries=3
+          begin
+            @logger.debug "[ONAP Integration] calling Jenkins for #{@project_name}"
+            response = Faraday.get console_log_url
+          rescue Faraday::ConnectionFailed => e
+            @logger.error "[ONAP Integration] Failed to connect to ONAP Jenkins server.  Error: #{e}"
+            tries -= 1
+            if tries > 0
+              @logger.info "[ONAP Integration] Trying to call Jenkins again"
+              retry
+            else
+              @logger.error "[ONAP Integration] Giving up trying to call Jenkins"
+              # TODO: raise error
+              return
+            end
+          end
+
+          if response.body.nil?
+            @logger.error "Failed to download last build data from #{url}"
+            return
+          end
+
+          log_data = response.body
+        end
+
         def head_container_image_tag
           # TODO: :arrow_forward:  Construct image_tag_name with the release version + "-STAGING-latest".  If the version ends in .0 then strip the.0 (edited)
           version = release_version
           version.sub!(/\.0$/,"")
 
-          "#{version}-STAGING-latest"
+
+          log_data = jenkins_daily_build_console_data
+          tag_line = log_data.lines.grep(/Tag with/).grep(/openecomp\/mso:/).last
+          line_parts = tag_line.split('with ')
+          image_tag = line_parts[1].split(',')[0]
         end
 
         # TODO: fix tests

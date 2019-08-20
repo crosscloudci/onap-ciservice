@@ -92,7 +92,7 @@ describe "bin/build_pipeline", :type => :aruba, :exit_timeout => 600 do
   #   #let(:config_location) { "https://raw.githubusercontent.com/crosscloudci/cncf-configuration/integration/cross-cloud.yml" }
   #   let(:config_location) { File.join(spec_dir, "test-cross-cloud.yml") }
 
-    it "retrieves a head release container configured for that project in config specified in CROSS_CLOUD_YML environment" do
+    xit "retrieves a head release container configured for that project in config specified in CROSS_CLOUD_YML environment" do
 
       release_type="head"
       release_arg = "--release-type=#{release_type}"
@@ -107,7 +107,7 @@ describe "bin/build_pipeline", :type => :aruba, :exit_timeout => 600 do
       end
     end
 
-    it "retrieves a head release container configured for that project in config specified as commandline argument" do
+    xit "retrieves a head release container configured for that project in config specified as commandline argument" do
       release_type="head"
       release_arg = "--release-type=#{release_type}"
       config_location_arg = "--cross-cloud-config=#{config_location}"
@@ -141,7 +141,7 @@ describe "bin/build_pipeline", :type => :aruba, :exit_timeout => 600 do
       expect(last_command_started).to be_successfully_executed
     end
 
-    it "creates a pinning configuration for head releases of the project" do
+    xit "creates a pinning configuration for head releases of the project" do
       release_type="head"
       release_arg = "--release-type=#{release_type}"
       cmd_with_args = "#{cmd} create_pinnings #{integration_arg} #{release_arg} #{config_location_arg} #{project_name}"
