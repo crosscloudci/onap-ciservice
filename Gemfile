@@ -14,7 +14,7 @@ gem 'json'
 gem 'awesome_print'
 gem 'faraday'
 gem 'thor'
-gem 'jenkins_api_client', :git => "https://github.com/crosscloudci/jenkins_api_client.git", :branch => 'nokogiri_upgrade_1.8.5'
+gem 'jenkins_api_client', :git => "https://github.com/crosscloudci/jenkins_api_client.git", :branch => 'nokogiri_upgrade_1.10.4'
 
 
 
