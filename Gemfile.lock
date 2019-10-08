@@ -1,12 +1,12 @@
 GIT
   remote: https://github.com/crosscloudci/jenkins_api_client.git
-  revision: 9e2037160622376c6011e96d1c6cf111ba2c689f
-  branch: nokogiri_upgrade_1.8.5
+  revision: 8b1e1c544e4af45d32ca5d64b129672d8a316ff1
+  branch: nokogiri_upgrade_1.10.4
   specs:
     jenkins_api_client (1.5.3)
       json (>= 1.0)
       mixlib-shellout (>= 1.1.0)
-      nokogiri (~> 1.8.5)
+      nokogiri (~> 1.10.4)
       socksify (>= 1.7.0)
       terminal-table (>= 1.4.0)
       thor (>= 0.16.0)
@@ -87,15 +87,15 @@ GEM
     mime-types (3.2.2)
       mime-types-data (~> 3.2015)
     mime-types-data (3.2018.0812)
-    mini_portile2 (2.3.0)
-    mixlib-shellout (2.4.4)
+    mini_portile2 (2.4.0)
+    mixlib-shellout (3.0.7)
     multi_json (1.13.1)
     multi_test (0.1.2)
     multipart-post (2.0.0)
     nenv (0.3.0)
     netrc (0.11.0)
-    nokogiri (1.8.5)
-      mini_portile2 (~> 2.3.0)
+    nokogiri (1.10.4)
+      mini_portile2 (~> 2.4.0)
     notiffany (0.1.1)
       nenv (~> 0.1)
       shellany (~> 0.0)
@@ -134,7 +134,7 @@ GEM
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.7.5)
-    unicode-display_width (1.5.0)
+    unicode-display_width (1.6.0)
     vcr (4.0.0)
     webmock (3.5.1)
       addressable (>= 2.3.6)
