@@ -1,6 +1,7 @@
 source 'https://rubygems.org'
 
-ruby '2.4.3'
+
+ruby '2.6.5'
 
 # gemspec
 
@@ -14,7 +15,7 @@ gem 'json'
 gem 'awesome_print'
 gem 'faraday'
 gem 'thor'
-gem 'jenkins_api_client'
+gem 'jenkins_api_client', :git => "https://github.com/crosscloudci/jenkins_api_client.git", :branch => 'nokogiri_upgrade_1.10.4'
 
 
 
